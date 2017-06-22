@@ -14,7 +14,7 @@ LDFLAGS = -ldl
 
 all: prepare $(OBJECTS)
 		#clear
-		$(CC) -o calc $(OBJECTS) $(CFLAGS) $(LDFLAGS)
+		$(CC) -o calc $(OBJECTS) $(CFLAGS) $(LDFLAGS) -g
 		./calc
 
 prepare: $(SUBDIRS)

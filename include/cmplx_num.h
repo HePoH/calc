@@ -18,11 +18,14 @@ typedef struct cmplx {
 	double b;
 } cmplx_num;
 
-typedef cmplx_num* (*pl_f)(cmplx_num*, cmplx_num*);
+typedef cmplx_num* (*)(cmplx_num*, cmplx_num*) plgn_ptr;
 
-typedef struct pfi {
-	pl_f m_f;
-	char* m_t;
-} PLUGIN_FUNCTION_INFO;
+typedef struct pi {
+	char* plgn_name;
+	char* main_func;
+	char* menu_title;
+
+	plgn_f pf;
+} PLUGIN_INFO;
 
 #endif
