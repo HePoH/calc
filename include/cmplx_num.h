@@ -11,12 +11,18 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
-
 #include <dlfcn.h>
 
 typedef struct cmplx {
 	double a;
 	double b;
 } cmplx_num;
+
+typedef cmplx_num* (*pl_f)(cmplx_num*, cmplx_num*);
+
+typedef struct pfi {
+	pl_f m_f;
+	char* m_t;
+} PLUGIN_FUNCTION_INFO;
 
 #endif

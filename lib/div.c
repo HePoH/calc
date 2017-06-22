@@ -1,6 +1,8 @@
 #include "../include/cmplx_num.h"
 
-char* PLUGIN_NAME = "div";
+char* PLUGIN_NAME = "div.so";
+char* MAIN_FUNCTION = "cn_div";
+char* MENU_TITLE = "[Div]ision";
 
 cmplx_num* cn_div(cmplx_num* first, cmplx_num* second){
         cmplx_num* ans = 0;

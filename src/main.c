@@ -1,56 +1,71 @@
 #include "../include/cmplx_num.h"
 
-int file_select(const struct dirent *entry) {
-	return strcmp(entry->d_name, ".so");
+int file_filter(const struct dirent *entry) {
+	return strstr(entry->d_name, ".so") != NULL;
 }
 
 struct dirent** find_libs(char* path, int* fc) {
 	struct dirent** fnl;
-	*fc = scandir(path, &fnl, file_select, alphasort);
+	*fc = scandir(path, &fnl, file_filter, alphasort);
 
 	return (*fc > 0) ? fnl : NULL;
 }
 
 void* load_lib(char* path){
 	void *ext_lib;
-	cmplx_num* (*func)(cmplx_num*, cmplx_num*);
+	pl_f func = NULL;
 
 	ext_lib = dlopen(path, RTLD_NOW);
 	if (!ext_lib){
 		fprintf(stderr, "dlopen() error: %s\n", dlerror());
-		return 1;
-	};
+		return NULL;
+	}
 
-	func = dlsym(ext_library, argv[1]);
-	dlclose(ext_library);
+	/*func = dlsym(ext_lib, "function");*/
+	void* obj = dlsym(ext_lib, "MAIN_FUNCTION");
+	char* ptr = (char*) obj;
+	printf("PLUGIN_NAME = %s (%d) \n\n", ptr, strlen(ptr));
+
+	dlclose(ext_lib);
+
+	return func;
 }
 
 int main(){
-	char c;
+	char c, lp[BUF_SIZE];
 	int i = 0, lc = 0;
-	struct dirent** libs = NULL;
-	cmplx_num *first = 0, *second = 0, *ans = 0;
-	cmplx_num* (**func)(cmplx_num*, cmplx_num*);
+	struct dirent** lfn = NULL;
 
-	first = (cmplx_num*) malloc(sizeof(cmplx_num));
+	cmplx_num *first = 0, *second = 0, *ans = 0;
+	pl_f* func = NULL;
+	/*cmplx_num* (**func)(cmplx_num*, cmplx_num*);*/
+
+	/*first = (cmplx_num*) malloc(sizeof(cmplx_num));
 	second = (cmplx_num*) malloc(sizeof(cmplx_num));
 
 	if (first == NULL || second == NULL)
 		return 0;
 
 	printf("\033[2J");
-	printf("\033[0;0f");
+	printf("\033[0;0f");*/
 
-	libs = find_libs("plugins", &lc);
-	func = malloc(lc * sizeof(void(*)(cmplx_num*, cmplx_num*));
+	chdir("./plugins/");
+	lfn = find_libs(".", &lc);
+	func = malloc(lc * sizeof(pl_f));
+
+	char dir[BUF_SIZE];
+	getcwd(dir, BUF_SIZE);
+	snprintf(lp, BUF_SIZE, "%s/%s", dir, lfn[0]->d_name);
+
+	printf("PATH: %s\n", lp);
+	load_lib(lp);
+
+	/*for (i = 0; i < lc; i++)
+		func[i] = malloc(sizeof(void(*)(cmplx_num*, cmplx_num*)));
+		func[i] = (cmplx_num*) load_lib("/home/2017d_medvedev/work/calc/plugins/add.so");*/
 
 	for (i = 0; i < lc; i++)
-		func[i] = malloc(sizeof...);
-
-	func[i] = (cmplx_num*) load_lib("/home/2017d_medvedev/work/calc/plugins/add.so");
-
-	for (i = 0; i < lc; i++)
-		printf("Lib: %s\n", libs[i]->d_name);
+		printf("Lib: %s\n", lfn[i]->d_name);
 
 	getchar();
 	/*while(c != 'q'){
