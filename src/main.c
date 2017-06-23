@@ -114,14 +114,19 @@ int main(){
                         	printf("\033[0;0f");
 
 				printf("\nInput the first complex number: ");
-				scanf("%lf %lf", &first->a, &first);
+				scanf("%lf %lf", &first->a, &first->b);
 
 				printf("Input the second complex number: ");
 				scanf("%lf %lf", &second->a, &second->b);
 
+				/*printf("");*/
+
 				ans = plgns[us].pf(first, second);
 				(!ans) ? printf("Error") : printf("\nResult: %.1f + %.1fi", ans->a, ans->b);
 				free(ans);
+
+				getchar();
+				getchar();
 			}
 	}
 

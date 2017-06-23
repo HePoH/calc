@@ -18,7 +18,9 @@ typedef struct cmplx {
 	double b;
 } cmplx_num;
 
-typedef cmplx_num* (*)(cmplx_num*, cmplx_num*) plgn_ptr;
+//cmplx_num* cn_add(cmplx_num* first, cmplx_num* second){
+
+typedef cmplx_num* (*plgn_f)(cmplx_num*, cmplx_num*);
 
 typedef struct pi {
 	char* plgn_name;
