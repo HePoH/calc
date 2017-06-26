@@ -1,7 +1,7 @@
 #ifndef CMPLX_NUM_H
 #define CMPLX_NUM_H
 
-#define _SVID_SOURCE
+#define _DEFAULT_SOURCE
 #define BUF_SIZE 255
 
 #include <stdio.h>
@@ -17,8 +17,6 @@ typedef struct cmplx {
 	double a;
 	double b;
 } cmplx_num;
-
-//cmplx_num* cn_add(cmplx_num* first, cmplx_num* second){
 
 typedef cmplx_num* (*plgn_f)(cmplx_num*, cmplx_num*);
 

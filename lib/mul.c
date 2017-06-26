@@ -5,14 +5,14 @@ char MAIN_FUNCTION[] = "cn_mul";
 char MENU_TITLE[] = "[Mul]tiplication";
 
 cmplx_num* cn_mul(cmplx_num* first, cmplx_num* second){
-        cmplx_num* ans = 0;
-        ans = (cmplx_num*) malloc(sizeof(cmplx_num));
+	cmplx_num* ans = NULL;
 
-        if (ans == NULL)
-                return 0;
+	ans = malloc(sizeof(cmplx_num));
+	if (ans == NULL)
+		return NULL;
 
-        ans->a = first->a * second->a - first->b * second->b;
-        ans->b = first->a * second->b + first->b * second->a;
+	ans->a = first->a * second->a - first->b * second->b;
+	ans->b = first->a * second->b + first->b * second->a;
 
-        return ans;
+	return ans;
 }

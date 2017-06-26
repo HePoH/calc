@@ -5,17 +5,17 @@ char MAIN_FUNCTION[] = "cn_div";
 char MENU_TITLE[] = "[Div]ision";
 
 cmplx_num* cn_div(cmplx_num* first, cmplx_num* second){
-        cmplx_num* ans = 0;
-        ans = (cmplx_num*) malloc(sizeof(cmplx_num));
+	cmplx_num* ans = NULL;
 
-        if (ans == NULL)
-                return 0;
+	ans = malloc(sizeof(cmplx_num));
+	if (ans == NULL)
+		return NULL;
 
-        if (second->a == 0 && second->b == 0)
-                return 0;
+	if (second->a == 0 && second->b == 0)
+		return 0;
 
-        ans->a = (first->a * second->a + first->b * second->b) / (second->a * second->a + second->b * second->b);
-        ans->b = (second->a * first->b - first->a * second->b) / (second->a * second->a + second->b * second->b);
+	ans->a = (first->a * second->a + first->b * second->b) / (second->a * second->a + second->b * second->b);
+	ans->b = (second->a * first->b - first->a * second->b) / (second->a * second->a + second->b * second->b);
 
-        return ans;
+	return ans;
 }

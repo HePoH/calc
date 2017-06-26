@@ -5,16 +5,20 @@ int lib_file_filter(const struct dirent *entry) {
 }
 
 struct dirent** find_libs(char* path, int* fc) {
-	struct dirent** fnl;
+	struct dirent** fnl = NULL;
 	*fc = scandir(path, &fnl, lib_file_filter, alphasort);
 
 	return (*fc > 0) ? fnl : NULL;
 }
 
 char* get_plgn_path(char* path, char* plgn_name) {
-	char* plgn_path, cur_dir[BUF_SIZE];
+	char* plgn_path = NULL, cur_dir[BUF_SIZE] = {0};
 
 	plgn_path = malloc(BUF_SIZE * sizeof(char));
+	if (plgn_path == NULL) {
+		perror("malloc");
+		return NULL;
+	}
 
 	getcwd(cur_dir, BUF_SIZE);
 	snprintf(plgn_path, BUF_SIZE, "%s/%s", cur_dir, plgn_name);
@@ -27,8 +31,8 @@ PLUGIN_INFO* load_plgns(char* path, int* plgns_count){
 	struct dirent** pfn = NULL;
 	void *ext_lib = NULL;
 	plgn_f func = NULL;
-	char* plgn_path, *error;
-	PLUGIN_INFO* plgns;
+	char* plgn_path = NULL, *error = NULL;
+	PLUGIN_INFO* plgns = NULL;
 
 	if (chdir(path) != 0) {
 		perror("chdir");
@@ -37,9 +41,13 @@ PLUGIN_INFO* load_plgns(char* path, int* plgns_count){
 
 	pfn = find_libs(".", &pc);
 	plgns = malloc(pc * sizeof(PLUGIN_INFO));
+	if (plgns == NULL) {
+		perror("malloc");
+		return NULL;
+	}
+
 	*plgns_count = pc;
 
-	printf("\n");
 	for (i = 0; i < pc; i++) {
 		plgn_path = get_plgn_path(path, pfn[i]->d_name);
 
@@ -59,9 +67,7 @@ PLUGIN_INFO* load_plgns(char* path, int* plgns_count){
                 	return NULL;
         	}
 
-		/*printf("[%s]: %s\n -- %s\n -- %s\n -- %s\n -- %p\n\n", pfn[i]->d_name, plgn_path, plgns[i].plgn_name,
-									plgns[i].main_func, plgns[i].menu_title, plgns[i].pf);
-
+		/*printf("[%s]: %s\n -- %s\n -- %s\n -- %s\n -- %p\n\n", pfn[i]->d_name, plgn_path, plgns[i].plgn_name, plgns[i].main_func, plgns[i].menu_title, plgns[i].pf);
 		dlclose(ext_lib);*/
 	}
 
@@ -69,42 +75,48 @@ PLUGIN_INFO* load_plgns(char* path, int* plgns_count){
 }
 
 int main(){
-	char user_sel[BUF_SIZE];
+	char user_sel[BUF_SIZE] = {0};
 	int i = 0, pc = 0, us = 0;
 
-	cmplx_num *first = 0, *second = 0, *ans = 0;
+	cmplx_num *first = NULL, *second = NULL, *ans = NULL;
 	PLUGIN_INFO* plgns = NULL;
 
-	first = (cmplx_num*) malloc(sizeof(cmplx_num));
-	second = (cmplx_num*) malloc(sizeof(cmplx_num));
+	first = malloc(sizeof(cmplx_num));
+	second = malloc(sizeof(cmplx_num));
 
-	if (first == NULL || second == NULL)
+	if (first == NULL || second == NULL) {
+		perror("malloc");
 		return 0;
+	}
 
 	printf("\033[2J");
 	printf("\033[0;0f");
 
 	plgns = load_plgns("./plugins/", &pc);
+	if (plgns == NULL){
+		return 0;
+	}
 
+	printf("[ Plugins: %d ]\n\n", pc);
 	for (i = 0; i < pc; ++i)
-		printf("[%s]:\n -- %s\n -- %s\n -- %s\n -- %p\n\n", plgns[i].plgn_name, plgns[i].plgn_name,
-                                                                        plgns[i].main_func, plgns[i].menu_title, plgns[i].pf);
+		printf("%d. [%s]:\n -- %s\n -- %s\n -- %s\n -- %p\n\n", i + 1, plgns[i].plgn_name, plgns[i].plgn_name, plgns[i].main_func, plgns[i].menu_title, plgns[i].pf);
 
 	getchar();
 	while(1){
 		printf("\033[2J");
 		printf("\033[0;0f");
 
-		printf("\n[ Arithmetic operations on complex numbers ]\n");
+		printf("\n[ Arithmetic operations on complex numbers ]\n\n");
 
 		for (i = 0; i < pc; i++)
-			printf("%d. %s\n", i, plgns[i].menu_title);
+			printf("%d. %s\n", i + 1, plgns[i].menu_title);
 
-		printf("%d. [Ex]it\n", i);
+		printf("%d. [Ex]it\n", i + 1);
 
 		printf("\n > Select an arithmetic operation: ");
 		fgets(user_sel, BUF_SIZE, stdin);
 		sscanf(user_sel, "%d", &us);
+		us--;
 
 		if ((us == pc) || (user_sel[0] == 'q') || (strcmp("quit", user_sel) == 0) || (strcmp("exit", user_sel) == 0))
 			return 0;
@@ -118,8 +130,6 @@ int main(){
 
 				printf("Input the second complex number: ");
 				scanf("%lf %lf", &second->a, &second->b);
-
-				/*printf("");*/
 
 				ans = plgns[us].pf(first, second);
 				(!ans) ? printf("Error") : printf("\nResult: %.1f + %.1fi", ans->a, ans->b);
